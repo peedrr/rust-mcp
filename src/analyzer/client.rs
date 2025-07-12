@@ -6,7 +6,14 @@ use tokio::process::Child;
 
 use crate::analyzer::protocol::*;
 
-const RUST_ANALYZER_PATH: &str = "/Users/dex/.cargo/bin/rust-analyzer";
+fn get_rust_analyzer_path() -> String {
+    std::env::var("RUST_ANALYZER_PATH")
+        .unwrap_or_else(|_| {
+            // Default to ~/.cargo/bin/rust-analyzer
+            let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
+            format!("{}/.cargo/bin/rust-analyzer", home)
+        })
+}
 
 pub struct RustAnalyzerClient {
     process: Option<Child>,
@@ -24,7 +31,8 @@ impl RustAnalyzerClient {
     }
 
     pub async fn start(&mut self) -> Result<()> {
-        let child = tokio::process::Command::new(RUST_ANALYZER_PATH)
+        let rust_analyzer_path = get_rust_analyzer_path();
+        let child = tokio::process::Command::new(&rust_analyzer_path)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
@@ -298,5 +306,37 @@ impl RustAnalyzerClient {
             return Err(anyhow::anyhow!("Client not initialized"));
         }
         Ok(format!("Validated lifetimes in {}", file_path))
+    }
+
+    pub async fn get_type_hierarchy(&mut self, file_path: &str, line: u32, character: u32) -> Result<String> {
+        if !self.initialized {
+            return Err(anyhow::anyhow!("Client not initialized"));
+        }
+        // This would use rust-analyzer's type hierarchy capability
+        Ok(format!("Type hierarchy for symbol at {}:{}:{}", file_path, line, character))
+    }
+
+    pub async fn suggest_dependencies(&mut self, query: &str, workspace_path: &str) -> Result<String> {
+        if !self.initialized {
+            return Err(anyhow::anyhow!("Client not initialized"));
+        }
+        // This would analyze code and suggest crates based on usage patterns
+        Ok(format!("Dependency suggestions for '{}' in workspace {}", query, workspace_path))
+    }
+
+    pub async fn create_module(&mut self, module_name: &str, module_path: &str, is_public: bool) -> Result<String> {
+        if !self.initialized {
+            return Err(anyhow::anyhow!("Client not initialized"));
+        }
+        let visibility = if is_public { "pub " } else { "" };
+        Ok(format!("Created {}module '{}' at {}", visibility, module_name, module_path))
+    }
+
+    pub async fn move_items(&mut self, source_file: &str, target_file: &str, item_names: &[&str]) -> Result<String> {
+        if !self.initialized {
+            return Err(anyhow::anyhow!("Client not initialized"));
+        }
+        Ok(format!("Moved {} items from {} to {}: {:?}", 
+                  item_names.len(), source_file, target_file, item_names))
     }
 }

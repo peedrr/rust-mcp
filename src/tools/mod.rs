@@ -1,3 +1,4 @@
+pub mod advanced;
 pub mod analysis;
 pub mod cargo;
 pub mod formatting;
@@ -10,6 +11,7 @@ pub mod types;
 pub use types::*;
 
 // Re-export all tool functions for easy access
+pub use advanced::*;
 pub use analysis::*;
 pub use cargo::*;
 pub use formatting::*;

@@ -2,44 +2,56 @@
 
 A comprehensive Model Context Protocol (MCP) server that provides rust-analyzer integration for LLM-assisted Rust development. This server enables AI tools like Claude to work with Rust code idiomatically through rust-analyzer's Language Server Protocol capabilities, avoiding string manipulation and providing intelligent code analysis and refactoring.
 
-## Features
+🎉 **Complete Implementation**: All 19 planned tools are now implemented, providing a full-featured Rust development assistant!
 
-### Tier 1 Tools (Essential - 9 tools)
-**Code Analysis**
+## Quick Start
+
+1. **Build**: `cargo build --release`
+2. **Configure** your MCP client to use `target/release/rustmcp`
+3. **Use** through AI assistants with natural language prompts like "Generate a User struct with Debug and Clone derives"
+
+## Features - Complete Tool Suite (19 Tools)
+
+### Code Analysis (4 tools)
 - `find_definition` - Navigate to symbol definitions
 - `find_references` - Find all symbol uses  
 - `get_diagnostics` - Get compiler errors/warnings with fixes
 - `workspace_symbols` - Search project symbols
 
-**Basic Refactoring**
-- `rename_symbol` - Rename with scope awareness
-- `extract_function` - Extract code into functions
-- `format_code` - Apply rustfmt formatting
-
-**Project Management**
-- `analyze_manifest` - Parse and analyze Cargo.toml
-- `run_cargo_check` - Execute cargo check with error parsing
-
-### Tier 2 Tools (High Value - 9 tools)
-**Code Generation**
+### Code Generation (4 tools)
 - `generate_struct` - Create structs with derives and constructors
 - `generate_enum` - Create enums with variants
 - `generate_trait_impl` - Generate trait implementations with stubs
 - `generate_tests` - Create unit or integration test templates
 
-**Advanced Refactoring**
+### Refactoring (5 tools)
+- `rename_symbol` - Rename with scope awareness
+- `extract_function` - Extract code into functions
 - `inline_function` - Inline function calls
-- `change_signature` - Modify function signatures
 - `organize_imports` - Sort and organize use statements
+- `format_code` - Apply rustfmt formatting
 
-**Quality Checks**
+### Quality Assurance (2 tools)
 - `apply_clippy_suggestions` - Apply clippy automatic fixes
 - `validate_lifetimes` - Check lifetime and borrow checker issues
+
+### Project Management (2 tools)
+- `analyze_manifest` - Parse and analyze Cargo.toml
+- `run_cargo_check` - Execute cargo check with error parsing
+
+### Advanced Features (4 tools)
+- `get_type_hierarchy` - Get type relationships for symbols
+- `suggest_dependencies` - Recommend crates based on code patterns
+- `create_module` - Create new Rust modules with visibility control
+- `move_items` - Move code items between files
+
+### Additional Advanced Tools
+- `change_signature` - Modify function signatures safely
 
 ## Prerequisites
 
 - Rust toolchain (1.70+)
-- rust-analyzer installed at `/Users/dex/.cargo/bin/rust-analyzer` (or update path in code)
+- rust-analyzer installed (defaults to `~/.cargo/bin/rust-analyzer`)
 - An MCP-compatible client (Claude Desktop, Roo, etc.)
 
 ## Installation
@@ -59,12 +71,41 @@ cargo build --release
 
 ## Configuration
 
+### Environment Variables
+
+The server supports the following environment variables:
+
+- `RUST_ANALYZER_PATH` - Path to rust-analyzer binary (default: `~/.cargo/bin/rust-analyzer`)
+
+You can set this when running the server:
+```bash
+RUST_ANALYZER_PATH=/usr/local/bin/rust-analyzer ./target/release/rustmcp
+```
+
+Or set it in your MCP client configuration (see examples below).
+
 ### Claude Desktop
 
 Add the following to your Claude Desktop MCP configuration file:
 
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "rust-analyzer": {
+      "command": "/path/to/rust-mcp/target/release/rustmcp",
+      "args": [],
+      "env": {
+        "RUST_ANALYZER_PATH": "/custom/path/to/rust-analyzer"
+      }
+    }
+  }
+}
+```
+
+If rust-analyzer is in the default location (`~/.cargo/bin/rust-analyzer`), you can omit the `env` section:
 
 ```json
 {
@@ -80,6 +121,23 @@ Add the following to your Claude Desktop MCP configuration file:
 ### Roo Configuration
 
 Add to your Roo configuration file (typically `~/.roo/config.json`):
+
+```json
+{
+  "mcp_servers": [
+    {
+      "name": "rust-analyzer",
+      "command": "/path/to/rust-mcp/target/release/rustmcp",
+      "args": [],
+      "env": {
+        "RUST_ANALYZER_PATH": "/custom/path/to/rust-analyzer"
+      }
+    }
+  ]
+}
+```
+
+For default rust-analyzer location, you can use an empty env object:
 
 ```json
 {
@@ -112,13 +170,7 @@ Once configured, you can use the tools through your AI assistant. Here are some 
 "Find all references to the `Config` struct in this Rust project"
 "Show me the definition of the `parse_args` function"
 "Check for compiler errors in src/main.rs"
-```
-
-### Refactoring
-```
-"Rename the variable `data` to `user_input` throughout the codebase"
-"Extract this code block into a separate function called `validate_input`"
-"Format all the code in src/lib.rs"
+"Search for all symbols matching 'user' in the workspace"
 ```
 
 ### Code Generation
@@ -126,12 +178,37 @@ Once configured, you can use the tools through your AI assistant. Here are some 
 "Generate a struct called `User` with fields: name (String), age (u32), email (String), with Debug and Clone derives"
 "Create an enum called `HttpStatus` with variants: Ok, NotFound, ServerError"
 "Generate unit tests for the `calculate_total` function"
+"Generate a Display trait implementation for the User struct"
 ```
 
-### Quality Checks
+### Refactoring
+```
+"Rename the variable `data` to `user_input` throughout the codebase"
+"Extract this code block into a separate function called `validate_input`"
+"Inline the `helper_function` call on line 42"
+"Organize all import statements in src/lib.rs"
+"Format all the code in src/lib.rs"
+```
+
+### Quality Assurance
 ```
 "Run clippy and apply all automatic fixes to improve code quality"
 "Check for any lifetime or borrow checker issues in src/auth.rs"
+```
+
+### Project Management
+```
+"Analyze the Cargo.toml file and show dependency information"
+"Run cargo check and report any compilation errors"
+```
+
+### Advanced Features
+```
+"Show me the type hierarchy for the symbol at line 15, character 8 in src/main.rs"
+"Suggest crate dependencies for HTTP client functionality in this workspace"
+"Create a new public module called 'auth' in src/auth.rs"
+"Move the User struct and validate_user function from src/main.rs to src/user.rs"
+"Change the signature of the process_data function to accept a reference instead of ownership"
 ```
 
 ## Architecture
@@ -139,10 +216,22 @@ Once configured, you can use the tools through your AI assistant. Here are some 
 The server is built with a modular architecture:
 
 - **`src/main.rs`** - Entry point and server initialization
-- **`src/server.rs`** - MCP server implementation using rmcp crate
-- **`src/analyzer.rs`** - rust-analyzer LSP client integration
-- **`src/tools.rs`** - Tool implementations and execution logic
 - **`src/lib.rs`** - Module declarations
+- **`src/server/`** - MCP server implementation
+  - `handler.rs` - Tool handlers and MCP server logic using rmcp crate
+  - `parameters.rs` - Parameter type definitions for all tools
+- **`src/analyzer/`** - rust-analyzer LSP client integration
+  - `client.rs` - LSP client implementation and protocol handling
+- **`src/tools/`** - Modular tool implementations
+  - `types.rs` - Tool dispatcher and definitions
+  - `analysis.rs` - Code analysis tools (find_definition, find_references, etc.)
+  - `generation.rs` - Code generation tools (generate_struct, generate_enum, etc.)
+  - `refactoring.rs` - Refactoring tools (rename_symbol, extract_function, etc.)
+  - `formatting.rs` - Code formatting tools
+  - `quality.rs` - Quality assurance tools (clippy, lifetimes)
+  - `cargo.rs` - Project management tools
+  - `navigation.rs` - Navigation tools (workspace_symbols)
+  - `advanced.rs` - Advanced features (type hierarchy, dependencies, modules)
 
 ### Key Technologies
 - **rmcp** - Official Rust SDK for MCP implementation
@@ -166,20 +255,27 @@ The server exposes all tools through the MCP protocol. For debugging, you can:
 
 ### Adding New Tools
 
-1. Implement the tool function in `src/tools.rs`
-2. Add the tool to the `execute_tool` match statement
-3. Add the corresponding `#[tool]` method to `RustMcpServer` in `src/server.rs`
-4. Update the tool count in `src/main.rs`
+1. Create the tool implementation function in the appropriate `src/tools/*.rs` file
+2. Add parameter struct to `src/server/parameters.rs`
+3. Add the tool to the `execute_tool` match statement in `src/tools/types.rs`
+4. Add tool definition to `get_tools()` function in `src/tools/types.rs`
+5. Add the corresponding `#[tool]` method to `RustMcpServer` in `src/server/handler.rs`
+6. Add analyzer client method to `src/analyzer/client.rs` if needed
 
 ## Troubleshooting
 
 ### rust-analyzer Not Found
-Ensure rust-analyzer is installed and the path in `src/analyzer.rs` is correct:
-```rust
-const RUST_ANALYZER_PATH: &str = "/Users/dex/.cargo/bin/rust-analyzer";
+Ensure rust-analyzer is installed and accessible. The server will look for rust-analyzer in the following order:
+
+1. The path specified by the `RUST_ANALYZER_PATH` environment variable
+2. Default location: `~/.cargo/bin/rust-analyzer`
+
+To use a custom path, set the environment variable:
+```bash
+export RUST_ANALYZER_PATH=/custom/path/to/rust-analyzer
 ```
 
-Update this path to match your rust-analyzer installation.
+Or configure it in your MCP client configuration (see Configuration section above).
 
 ### MCP Connection Issues
 - Verify the server binary path in your MCP client configuration

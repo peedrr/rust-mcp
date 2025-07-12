@@ -518,6 +518,113 @@ impl RustMcpServer {
             Err(e) => Ok(CallToolResult::success(vec![Content::text(&format!("Error: {}", e))])),
         }
     }
+
+    #[tool(description = "Get type hierarchy for a symbol at specified position")]
+    async fn get_type_hierarchy(
+        &self,
+        Parameters(GetTypeHierarchyParams { file_path, line, character }): Parameters<GetTypeHierarchyParams>,
+    ) -> Result<CallToolResult, McpError> {
+        let args = serde_json::json!({
+            "file_path": file_path,
+            "line": line,
+            "character": character
+        });
+        
+        let mut analyzer = self.analyzer.lock().await;
+        match execute_tool("get_type_hierarchy", args, &mut analyzer).await {
+            Ok(result) => {
+                if let Some(content) = result.content.first() {
+                    if let Some(text) = content.get("text") {
+                        return Ok(CallToolResult::success(vec![Content::text(
+                            text.as_str().unwrap_or("No result"),
+                        )]));
+                    }
+                }
+                Ok(CallToolResult::success(vec![Content::text("Type hierarchy retrieved successfully")]))
+            }
+            Err(e) => Ok(CallToolResult::success(vec![Content::text(&format!("Error: {}", e))])),
+        }
+    }
+
+    #[tool(description = "Suggest crate dependencies based on code patterns")]
+    async fn suggest_dependencies(
+        &self,
+        Parameters(SuggestDependenciesParams { query, workspace_path }): Parameters<SuggestDependenciesParams>,
+    ) -> Result<CallToolResult, McpError> {
+        let args = serde_json::json!({
+            "query": query,
+            "workspace_path": workspace_path
+        });
+        
+        let mut analyzer = self.analyzer.lock().await;
+        match execute_tool("suggest_dependencies", args, &mut analyzer).await {
+            Ok(result) => {
+                if let Some(content) = result.content.first() {
+                    if let Some(text) = content.get("text") {
+                        return Ok(CallToolResult::success(vec![Content::text(
+                            text.as_str().unwrap_or("No result"),
+                        )]));
+                    }
+                }
+                Ok(CallToolResult::success(vec![Content::text("Dependencies suggested successfully")]))
+            }
+            Err(e) => Ok(CallToolResult::success(vec![Content::text(&format!("Error: {}", e))])),
+        }
+    }
+
+    #[tool(description = "Create a new Rust module with optional visibility")]
+    async fn create_module(
+        &self,
+        Parameters(CreateModuleParams { module_name, module_path, is_public }): Parameters<CreateModuleParams>,
+    ) -> Result<CallToolResult, McpError> {
+        let args = serde_json::json!({
+            "module_name": module_name,
+            "module_path": module_path,
+            "is_public": is_public
+        });
+        
+        let mut analyzer = self.analyzer.lock().await;
+        match execute_tool("create_module", args, &mut analyzer).await {
+            Ok(result) => {
+                if let Some(content) = result.content.first() {
+                    if let Some(text) = content.get("text") {
+                        return Ok(CallToolResult::success(vec![Content::text(
+                            text.as_str().unwrap_or("No result"),
+                        )]));
+                    }
+                }
+                Ok(CallToolResult::success(vec![Content::text("Module created successfully")]))
+            }
+            Err(e) => Ok(CallToolResult::success(vec![Content::text(&format!("Error: {}", e))])),
+        }
+    }
+
+    #[tool(description = "Move code items from one file to another")]
+    async fn move_items(
+        &self,
+        Parameters(MoveItemsParams { source_file, target_file, item_names }): Parameters<MoveItemsParams>,
+    ) -> Result<CallToolResult, McpError> {
+        let args = serde_json::json!({
+            "source_file": source_file,
+            "target_file": target_file,
+            "item_names": item_names
+        });
+        
+        let mut analyzer = self.analyzer.lock().await;
+        match execute_tool("move_items", args, &mut analyzer).await {
+            Ok(result) => {
+                if let Some(content) = result.content.first() {
+                    if let Some(text) = content.get("text") {
+                        return Ok(CallToolResult::success(vec![Content::text(
+                            text.as_str().unwrap_or("No result"),
+                        )]));
+                    }
+                }
+                Ok(CallToolResult::success(vec![Content::text("Items moved successfully")]))
+            }
+            Err(e) => Ok(CallToolResult::success(vec![Content::text(&format!("Error: {}", e))])),
+        }
+    }
 }
 
 #[tool_handler]

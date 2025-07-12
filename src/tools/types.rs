@@ -50,6 +50,10 @@ pub async fn execute_tool(name: &str, args: Value, analyzer: &mut RustAnalyzerCl
         "organize_imports" => crate::tools::refactoring::organize_imports_impl(args, analyzer).await,
         "apply_clippy_suggestions" => crate::tools::quality::apply_clippy_suggestions_impl(args, analyzer).await,
         "validate_lifetimes" => crate::tools::quality::validate_lifetimes_impl(args, analyzer).await,
+        "get_type_hierarchy" => crate::tools::advanced::get_type_hierarchy_impl(args, analyzer).await,
+        "suggest_dependencies" => crate::tools::advanced::suggest_dependencies_impl(args, analyzer).await,
+        "create_module" => crate::tools::advanced::create_module_impl(args, analyzer).await,
+        "move_items" => crate::tools::advanced::move_items_impl(args, analyzer).await,
         _ => Err(anyhow::anyhow!("Unknown tool: {}", name)),
     }
 }
@@ -280,6 +284,60 @@ pub fn get_tools() -> Vec<ToolDefinition> {
                     "file_path": {"type": "string"}
                 },
                 "required": ["file_path"]
+            }),
+        ),
+        ToolDefinition::new(
+            "get_type_hierarchy",
+            "Get type hierarchy for a symbol at specified position",
+            json!({
+                "type": "object",
+                "properties": {
+                    "file_path": {"type": "string"},
+                    "line": {"type": "integer", "minimum": 0},
+                    "character": {"type": "integer", "minimum": 0}
+                },
+                "required": ["file_path", "line", "character"]
+            }),
+        ),
+        ToolDefinition::new(
+            "suggest_dependencies",
+            "Suggest crate dependencies based on code patterns",
+            json!({
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "workspace_path": {"type": "string"}
+                },
+                "required": ["query", "workspace_path"]
+            }),
+        ),
+        ToolDefinition::new(
+            "create_module",
+            "Create a new Rust module with optional visibility",
+            json!({
+                "type": "object",
+                "properties": {
+                    "module_name": {"type": "string"},
+                    "module_path": {"type": "string"},
+                    "is_public": {"type": "boolean"}
+                },
+                "required": ["module_name", "module_path"]
+            }),
+        ),
+        ToolDefinition::new(
+            "move_items",
+            "Move code items from one file to another",
+            json!({
+                "type": "object",
+                "properties": {
+                    "source_file": {"type": "string"},
+                    "target_file": {"type": "string"},
+                    "item_names": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    }
+                },
+                "required": ["source_file", "target_file", "item_names"]
             }),
         ),
     ]

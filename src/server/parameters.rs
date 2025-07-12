@@ -117,3 +117,30 @@ pub struct ApplyClippySuggestionsParams {
 pub struct ValidateLifetimesParams {
     pub file_path: String,
 }
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct GetTypeHierarchyParams {
+    pub file_path: String,
+    pub line: u32,
+    pub character: u32,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct SuggestDependenciesParams {
+    pub query: String,
+    pub workspace_path: String,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct CreateModuleParams {
+    pub module_name: String,
+    pub module_path: String,
+    pub is_public: bool,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct MoveItemsParams {
+    pub source_file: String,
+    pub target_file: String,
+    pub item_names: Vec<String>,
+}
