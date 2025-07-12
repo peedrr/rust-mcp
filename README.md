@@ -2,8 +2,6 @@
 
 A comprehensive Model Context Protocol (MCP) server that provides rust-analyzer integration for LLM-assisted Rust development. This server enables AI tools like Claude to work with Rust code idiomatically through rust-analyzer's Language Server Protocol capabilities, avoiding string manipulation and providing intelligent code analysis and refactoring.
 
-🎉 **Complete Implementation**: All 19 planned tools are now implemented, providing a full-featured Rust development assistant!
-
 ## Quick Start
 
 1. **Build**: `cargo build --release`
@@ -52,7 +50,7 @@ A comprehensive Model Context Protocol (MCP) server that provides rust-analyzer 
 
 - Rust toolchain (1.70+)
 - rust-analyzer installed (defaults to `~/.cargo/bin/rust-analyzer`)
-- An MCP-compatible client (Claude Desktop, Roo, etc.)
+- An MCP-compatible client (Claude, Roo, etc.)
 
 ## Installation
 
@@ -233,12 +231,6 @@ The server is built with a modular architecture:
   - `navigation.rs` - Navigation tools (workspace_symbols)
   - `advanced.rs` - Advanced features (type hierarchy, dependencies, modules)
 
-### Key Technologies
-- **rmcp** - Official Rust SDK for MCP implementation
-- **rust-analyzer** - Rust Language Server Protocol implementation
-- **tokio** - Async runtime for handling concurrent operations
-- **serde_json** - JSON serialization for LSP communication
-
 ## Development
 
 ### Running in Development
@@ -294,4 +286,3 @@ Or configure it in your MCP client configuration (see Configuration section abov
 3. Implement your changes with tests
 4. Submit a pull request
 
-## License
