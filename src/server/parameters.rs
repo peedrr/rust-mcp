@@ -47,3 +47,73 @@ pub struct AnalyzeManifestParams {
 pub struct RunCargoCheckParams {
     pub workspace_path: String,
 }
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct ExtractFunctionParams {
+    pub file_path: String,
+    pub start_line: u32,
+    pub start_character: u32,
+    pub end_line: u32,
+    pub end_character: u32,
+    pub function_name: String,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct GenerateStructParams {
+    pub struct_name: String,
+    pub fields: Vec<serde_json::Value>,
+    pub derives: Option<Vec<String>>,
+    pub file_path: String,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct GenerateEnumParams {
+    pub enum_name: String,
+    pub variants: Vec<serde_json::Value>,
+    pub derives: Option<Vec<String>>,
+    pub file_path: String,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct GenerateTraitImplParams {
+    pub trait_name: String,
+    pub struct_name: String,
+    pub file_path: String,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct GenerateTestsParams {
+    pub target_function: String,
+    pub file_path: String,
+    pub test_cases: Option<Vec<serde_json::Value>>,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct InlineFunctionParams {
+    pub file_path: String,
+    pub line: u32,
+    pub character: u32,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct ChangeSignatureParams {
+    pub file_path: String,
+    pub line: u32,
+    pub character: u32,
+    pub new_signature: String,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct OrganizeImportsParams {
+    pub file_path: String,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct ApplyClippySuggestionsParams {
+    pub file_path: String,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct ValidateLifetimesParams {
+    pub file_path: String,
+}
