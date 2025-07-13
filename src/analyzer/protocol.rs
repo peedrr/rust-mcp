@@ -1,4 +1,4 @@
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 pub fn create_text_document_position_params(file_path: &str, line: u32, character: u32) -> Value {
     json!({
