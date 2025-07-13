@@ -1,3 +1,5 @@
+[![CI](https://github.com/dexwritescode/rust-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/dexwritescode/rust-mcp/actions/workflows/ci.yml)
+
 # Rust MCP Server
 
 A comprehensive Model Context Protocol (MCP) server that provides rust-analyzer integration for LLM-assisted Rust development. This server enables AI tools like Claude to work with Rust code idiomatically through rust-analyzer's Language Server Protocol capabilities, avoiding string manipulation and providing intelligent code analysis and refactoring.
