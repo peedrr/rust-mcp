@@ -18,12 +18,6 @@
         packages = {
           rust-mcp = naersk'.buildPackage {
             src = ./.;
-            buildInputs = with pkgs; [
-              # Add any system dependencies here if needed
-            ];
-            nativeBuildInputs = with pkgs; [
-              pkg-config
-            ];
           };
           default = self.packages.${system}.rust-mcp;
         };
@@ -34,17 +28,6 @@
             program = "${self.packages.${system}.rust-mcp}/bin/rustmcp";
           };
           default = self.apps.${system}.rust-mcp;
-        };
-
-        devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            cargo
-            rustc
-            rust-analyzer
-            rustfmt
-            clippy
-            pkg-config
-          ];
         };
       }
     );
